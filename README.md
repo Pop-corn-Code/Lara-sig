@@ -1,66 +1,292 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Implement digital signature in laravel
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Hello all! In this article, we will talk about laravel signature pad example. We will use signature pad in laravel. if you have question about jquery signature pad canvas image laravel then i will give simple example with solution. if you want to see example of laravel e-signature then you are a right place.
 
-## About Laravel
+## Preview:
+<img src="preview.png" width="419px" />
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Step 1: Install Laravel
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+first of all we need to get fresh Laravel application using bellow command, So open your terminal OR command prompt and run bellow command:
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+```php
+    composer create-project --prefer-dist laravel/laravel blogFirebase
+```
 
-## Learning Laravel
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Step 2: Create Route
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+In this is step we need to add route for generate view and submit post method. so open your route file and add following route.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+`routes/web.php`
 
-## Laravel Sponsors
+```php
+    <?php
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+  
 
-### Premium Partners
+    use Illuminate\Support\Facades\Route;
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+    
 
-## Contributing
+    use App\Http\Controllers\SignaturePadController;
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+    
 
-## Code of Conduct
+    /*
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+    |--------------------------------------------------------------------------
 
-## Security Vulnerabilities
+    | Web Routes
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+    |--------------------------------------------------------------------------
 
-## License
+    |
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+    | Here is where you can register web routes for your application. These
+
+    | routes are loaded by the RouteServiceProvider within a group which
+
+    | contains the "web" middleware group. Now create something great!
+
+    |
+
+    */
+
+    
+
+    Route::get('signaturepad', [SignaturePadController::class, 'index']);
+
+    Route::post('signaturepad', [SignaturePadController::class, 'upload'])->name('signaturepad.upload');
+```
+
+## Step 3: Create Controller
+
+If you haven't HomeController then we should create new controller as SignaturePadController in that file we will add two methods, index() and upload(), so put bellow content in controller file:
+
+`app/Http/Controllers/SignaturePadController.php`
+
+```php
+    <?php
+
+  
+
+    namespace App\Http\Controllers;
+
+    
+
+    use Illuminate\Http\Request;
+
+    
+
+    class SignaturePadController extends Controller
+
+    {
+
+        /**
+
+        * Write code on Method
+
+        *
+
+        * @return response()
+
+        */
+
+        public function index()
+
+        {
+
+            return view('signaturePad');
+
+        }
+
+    
+
+        /**
+
+        * Write code on Method
+
+        *
+
+        * @return response()
+
+        */
+
+        public function upload(Request $request)
+
+        {
+
+            $folderPath = public_path('upload/');
+
+            
+
+            $image_parts = explode(";base64,", $request->signed);
+
+                
+
+            $image_type_aux = explode("image/", $image_parts[0]);
+
+            
+
+            $image_type = $image_type_aux[1];
+
+            
+
+            $image_base64 = base64_decode($image_parts[1]);
+
+            
+
+            $file = $folderPath . uniqid() . '.'.$image_type;
+
+            file_put_contents($file, $image_base64);
+
+            return back()->with('success', 'success Full upload signature');
+
+        }
+
+    }   
+```
+
+## Step 4: Create View File
+
+In last step, we have to create view file "signaturePad.blade.php" for generate view signature pad, so create signaturePad file and put bellow code:
+
+`resources/view/signaturePad.blade.php`
+
+```php
+
+    <html>
+
+    <head>
+
+        <title>Laravel Signature Pad Tutorial Example - ItSolutionStuff.com </title>
+
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.css">
+
+    
+
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script> 
+
+        <link type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/south-street/jquery-ui.css" rel="stylesheet"> 
+
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+
+        <script type="text/javascript" src="http://keith-wood.name/js/jquery.signature.js"></script>
+
+    
+
+        <link rel="stylesheet" type="text/css" href="http://keith-wood.name/css/jquery.signature.css">
+
+    
+
+        <style>
+
+            .kbw-signature { width: 100%; height: 200px;}
+
+            #sig canvas{
+
+                width: 100% !important;
+
+                height: auto;
+
+            }
+
+        </style>
+
+    
+
+    </head>
+
+    <body class="bg-dark">
+
+    <div class="container">
+
+    <div class="row">
+
+        <div class="col-md-6 offset-md-3 mt-5">
+
+            <div class="card">
+
+                <div class="card-header">
+
+                    <h5>Laravel Signature Pad Tutorial Example - ItSolutionStuff.com </h5>
+
+                </div>
+
+                <div class="card-body">
+
+                        @if ($message = Session::get('success'))
+
+                            <div class="alert alert-success  alert-dismissible">
+
+                                <button type="button" class="close" data-dismiss="alert">×</button>  
+
+                                <strong>{{ $message }}</strong>
+
+                            </div>
+
+                        @endif
+
+                        <form method="POST" action="{{ route('signaturepad.upload') }}">
+
+                            @csrf
+
+                            <div class="col-md-12">
+
+                                <label class="" for="">Signature:</label>
+
+                                <br/>
+
+                                <div id="sig" ></div>
+
+                                <br/>
+
+                                <button id="clear" class="btn btn-danger btn-sm">Clear Signature</button>
+
+                                <textarea id="signature64" name="signed" style="display: none"></textarea>
+
+                            </div>
+
+                            <br/>
+
+                            <button class="btn btn-success">Save</button>
+
+                        </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    </div>
+
+    <script type="text/javascript">
+
+        var sig = $('#sig').signature({syncField: '#signature64', syncFormat: 'PNG'});
+
+        $('#clear').click(function(e) {
+
+            e.preventDefault();
+
+            sig.signature('clear');
+
+            $("#signature64").val('');
+
+        });
+
+    </script>
+
+    </body>
+
+    </html>
+```
+
+Now you can run project using following command:
+
+```php
+    php artisan serve
+```
