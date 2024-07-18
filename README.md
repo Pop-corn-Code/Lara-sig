@@ -160,7 +160,7 @@ In last step, we have to create view file "signaturePad.blade.php" for generate 
 
     <head>
 
-        <title>Laravel Signature Pad Tutorial Example - ItSolutionStuff.com </title>
+        <title>Laravel Signature Pad Tutorial Example - (@Pop~corn) </title>
 
         <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.css">
 
@@ -210,7 +210,7 @@ In last step, we have to create view file "signaturePad.blade.php" for generate 
 
                 <div class="card-header">
 
-                    <h5>Laravel Signature Pad Tutorial Example - ItSolutionStuff.com </h5>
+                    <h5>Laravel Signature Pad Tutorial Example - (@Pop~corn) </h5>
 
                 </div>
 
